@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import itertools
 import time
 import os
 import glob2
@@ -28,7 +29,10 @@ def parseArgs():
                        help =
                        'Number of threads to use (controls how fast we read/write from disk).  [%(default)s]')
 
-   parser.add_argument('--search-glob', default = '*',
+   parser.add_argument('--list-files', action='store_true', default = False,
+                       help = 'List the files which would be checked (src files)')
+
+   parser.add_argument('--search-glob', action = 'append',
                        help = "Glob to use to find files.  [%(default)s]")
 
    parser.add_argument('--dest',
@@ -127,17 +131,19 @@ def copyFiles(destPath, filesByHash):
 @inlineCallbacks
 def asyncMain(args):
    try:
-      a = time.time()
+      files_for_globs = [buildListOfFiles(sg) for sg in args.search_glob]
+      files = set(itertools.chain(*files_for_globs))
+      if args.list_files:
+         for f in files:
+            print f
 
-      files = buildListOfFiles(args.search_glob)
+      print 'Found %d files' % len(files)
+
+      if args.list_files:
+         returnValue(None)
 
       files_by_hash = yield computeFileHashes(files)
-
-      print 'Files with dups: %d/%d' % (
-         len([1 for h, f in files_by_hash.iteritems() if len(f) > 1]),
-         len(files_by_hash))
-
-      print 'time:', time.time() - a
+      print 'Found %d unique files' % len(files_by_hash)
 
       if args.dest:
          yield copyFiles(args.dest, files_by_hash)
@@ -158,4 +164,3 @@ if __name__ == '__main__':
 
    reactor.callWhenRunning(asyncMain, args)
    reactor.run()
-
