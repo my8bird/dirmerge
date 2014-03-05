@@ -67,8 +67,8 @@ def progressPrinter(deferreds, frmt):
    # - Get some output as they finish
    def showProgress(val):
       num_fin = len([1 for d in deferreds if d.called])
-      total = len(deferreds)
-      text  = frmt % (num_fin, total, num_fin / total)
+      total   = len(deferreds)
+      text    = frmt % (num_fin, total, (float(num_fin) / float(total)) * 100.0)
 
       sys.stdout.write('\r' + text + '                   ')
       return val
@@ -84,7 +84,7 @@ def computeFileHashes(files):
    # - The result of hashfile will be a tuple of (filepath, hash)
    hash_deferreds = [deferToThread(hashfile, fpath) for fpath in files]
 
-   progress_printer = progressPrinter(hash_deferreds, 'Generating Hashes: %d/%d %2f')
+   progress_printer = progressPrinter(hash_deferreds, 'Generating Hashes: %d/%d %.2f%%')
    for deferred in hash_deferreds:
       deferred.addCallback(progress_printer)
 
@@ -121,7 +121,7 @@ def copyFiles(destPath, filesByHash):
                 for sig, src_paths in filesByHash.viewitems()
                 if sig not in dest_files_by_hash]
 
-   progress_printer = progressPrinter(deferreds, 'Copied %d/%d %2f')
+   progress_printer = progressPrinter(deferreds, 'Copied %d/%d %.2f%%')
    for d in deferreds:
       d.addCallback(progress_printer)
 
