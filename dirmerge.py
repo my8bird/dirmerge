@@ -146,8 +146,6 @@ def asyncMain(args):
 
       if args.dest:
          yield copyFiles(args.dest, files_by_hash)
-   except Exception as ex:
-      ex.printTraceback()
    finally:
       reactor.stop()
 
