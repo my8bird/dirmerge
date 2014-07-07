@@ -21,9 +21,6 @@ from twisted.internet.defer   import inlineCallbacks, returnValue, DeferredList
 def parseArgs():
    parser = ArgumentParser()
 
-   #parser.add_argument('directory', nargs = '*',
-   #                    help = "Directories to search through.")
-
    parser.add_argument('--threads', default = 1, type = int,
                        help =
                        'Number of threads to use (controls how fast we read/write from disk).  [%(default)s]')
