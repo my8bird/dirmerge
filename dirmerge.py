@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import itertools
-import time
 import os
 import glob2
 import shutil
