@@ -31,7 +31,7 @@ def parseArgs():
    parser.add_argument('--list-files', action='store_true', default = False,
                        help = 'List the files which would be checked (src files)')
 
-   parser.add_argument('--search-glob', action = 'append',
+   parser.add_argument('--search-glob', action = 'append', required = True,
                        help = "Glob to use to find files.  [%(default)s]")
 
    parser.add_argument('--dest',
@@ -159,6 +159,7 @@ if __name__ == '__main__':
    signal.signal(signal.SIGINT, customHandler)
 
    args = parseArgs()
+
    reactor.suggestThreadPoolSize(args.threads)
 
    reactor.callWhenRunning(asyncMain, args)
